@@ -1,0 +1,7 @@
+#ifndef TEST_CONFIG_H
+#define TEST_CONFIG_H
+
+#define BUILD_DIR_PATH "@CMAKE_BINARY_DIR@"
+
+#endif // TEST_CONFIG_H
+

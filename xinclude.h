@@ -27,13 +27,12 @@
 
 #define DISABLE_SIGN_COMPARE_WARNINGS
 
-#include "xmacros.h"
 #include "xdiff.h"
+#include "xmacros.h"
 #include "xtypes.h"
-#include "xutils.h"
-#include "xprepare.h"
 #include "xdiffi.h"
 #include "xemit.h"
-
+#include "xprepare.h"
+#include "xutils.h"
 
 #endif /* #if !defined(XINCLUDE_H) */
