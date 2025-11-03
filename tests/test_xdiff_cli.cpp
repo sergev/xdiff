@@ -321,13 +321,13 @@ TEST_F(XDiffCliTest, MovedBlocksPlain)
 }
 
 // Test moved block detection - blocks mode
-TEST_F(XDiffCliTest, DISABLED_MovedBlocksMode)
+TEST_F(XDiffCliTest, MovedBlocksMode)
 {
     // Create files with a large moved block (>= 20 alphanumeric chars)
     createTestFile("file1.txt",
-                   "line1\nline2\nfunction_name_here\nmore_code_here\nmore_lines_here\nline3\n");
+                   "line1\nline2\nfunction_name_here\nmore_code_here\nmore_lines_here\nhas to be a really long line3\n");
     createTestFile("file2.txt",
-                   "line1\nline2\nline3\nfunction_name_here\nmore_code_here\nmore_lines_here\n");
+                   "line1\nline2\nhas to be a really long line3\nfunction_name_here\nmore_code_here\nmore_lines_here\n");
 
     std::string output, error;
     fs::path file1 = test_dir / "file1.txt";
@@ -344,11 +344,11 @@ TEST_F(XDiffCliTest, DISABLED_MovedBlocksMode)
 }
 
 // Test moved block detection - zebra mode
-TEST_F(XDiffCliTest, DISABLED_MovedBlocksZebra)
+TEST_F(XDiffCliTest, MovedBlocksZebra)
 {
     // Create files with multiple moved blocks (each >= 20 alphanumeric chars)
-    createTestFile("file1.txt", "line1\nfunction_one_data_here\nfunction_two_data_here\nline2\n");
-    createTestFile("file2.txt", "line1\nline2\nfunction_one_data_here\nfunction_two_data_here\n");
+    createTestFile("file1.txt", "line1\nfunction_one_data_here\nfunction_two_data_here\nhas to be a really long line2\n");
+    createTestFile("file2.txt", "line1\nhas to be a really long line2\nfunction_one_data_here\nfunction_two_data_here\n");
 
     std::string output, error;
     fs::path file1 = test_dir / "file1.txt";
