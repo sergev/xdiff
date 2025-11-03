@@ -15,14 +15,6 @@ set(INSTALL_GTEST OFF CACHE BOOL "" FORCE)
 
 FetchContent_MakeAvailable(googletest)
 
-# Configure test config header with build directory path
-# Use parent binary directory (CMAKE_BINARY_DIR) for the build path
-configure_file(
-  ${CMAKE_CURRENT_SOURCE_DIR}/test_config.h.in
-  ${CMAKE_CURRENT_BINARY_DIR}/test_config.h
-  @ONLY
-)
-
 # Create test executable
 add_executable(test_xdiff_cli test_xdiff_cli.cpp)
 target_link_libraries(test_xdiff_cli PRIVATE gtest_main)
@@ -38,8 +30,10 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
   target_link_libraries(test_xdiff_cli PRIVATE stdc++fs)
 endif()
 
-# Include generated config header
-target_include_directories(test_xdiff_cli PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
+# Pass build directory path to test executable
+target_compile_definitions(test_xdiff_cli PRIVATE
+    BUILD_DIR_PATH="${CMAKE_BINARY_DIR}"
+)
 
 # Include GoogleTest module (must be after target is created)
 include(GoogleTest)

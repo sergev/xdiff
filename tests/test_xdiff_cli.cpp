@@ -10,7 +10,9 @@
 #include <string>
 #include <vector>
 
-#include "test_config.h"
+#ifndef BUILD_DIR_PATH
+#error BUILD_DIR_PATH must be defined
+#endif
 
 namespace fs = std::filesystem;
 
