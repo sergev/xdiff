@@ -87,21 +87,21 @@ static long count_alnum(const char *line, size_t len)
 
 /* Compute hash for a block of lines */
 static unsigned long compute_block_hash(xrecord_t **recs, long start, long count,
-                                        enum moved_ws_mode ws_mode)
+                                       enum moved_ws_mode ws_mode)
 {
     char normalized[4096]; /* Buffer for normalized line */
     size_t normalized_len;
     unsigned long hash = 5381;
     long i;
-
+    
     for (i = 0; i < count; i++) {
         xrecord_t *rec = recs[start + i];
         normalize_whitespace(rec->ptr, rec->size, ws_mode, normalized, &normalized_len);
-        hash = djb2_hash(normalized, normalized_len);
+        unsigned long line_hash = djb2_hash(normalized, normalized_len);
         /* Combine hashes */
-        hash = ((hash << 5) + hash) + hash;
+        hash = ((hash << 5) + hash) + line_hash;
     }
-
+    
     return hash;
 }
 

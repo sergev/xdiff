@@ -293,3 +293,95 @@ TEST_F(XDiffCliTest, MissingFileArguments)
                 output.find("Usage") != std::string::npos)
         << "Should show usage or error message";
 }
+
+// Test moved block detection - plain mode
+TEST_F(XDiffCliTest, MovedBlocksPlain)
+{
+    // Create files where a block is moved
+    // Use larger blocks to ensure they're detected
+    createTestFile("file1.txt", "line1\nline2\nfunction_name_here\nmore_code_here\nmore_lines_here\nline3\nline4\n");
+    createTestFile("file2.txt", "line1\nline2\nline3\nline4\nfunction_name_here\nmore_code_here\nmore_lines_here\n");
+
+    std::string output, error;
+    fs::path file1 = test_dir / "file1.txt";
+    fs::path file2 = test_dir / "file2.txt";
+
+    int status = runXDiffCli({ "--moved=plain", file1.string(), file2.string() }, output, error);
+
+    EXPECT_EQ(0, status) << "Moved block detection should work";
+    // Check that moved lines are marked with { and }
+    // The exact format may vary, but should contain { markers
+    EXPECT_TRUE(output.find("{") != std::string::npos) << "Output should contain moved block markers";
+}
+
+// Test moved block detection - blocks mode
+TEST_F(XDiffCliTest, MovedBlocksMode)
+{
+    // Create files with a large moved block (>= 20 alphanumeric chars)
+    createTestFile("file1.txt", "line1\nline2\nfunction_name_here\nmore_code_here\nmore_lines_here\nline3\n");
+    createTestFile("file2.txt", "line1\nline2\nline3\nfunction_name_here\nmore_code_here\nmore_lines_here\n");
+
+    std::string output, error;
+    fs::path file1 = test_dir / "file1.txt";
+    fs::path file2 = test_dir / "file2.txt";
+
+    int status = runXDiffCli({ "--moved=blocks", file1.string(), file2.string() }, output, error);
+
+    EXPECT_EQ(0, status) << "Moved blocks mode should work";
+    // Blocks mode should detect the moved block
+    EXPECT_TRUE(output.find("{") != std::string::npos) << "Output should contain moved block markers";
+}
+
+// Test moved block detection - zebra mode
+TEST_F(XDiffCliTest, MovedBlocksZebra)
+{
+    // Create files with multiple moved blocks (each >= 20 alphanumeric chars)
+    createTestFile("file1.txt", "line1\nfunction_one_data_here\nfunction_two_data_here\nline2\n");
+    createTestFile("file2.txt", "line1\nline2\nfunction_one_data_here\nfunction_two_data_here\n");
+
+    std::string output, error;
+    fs::path file1 = test_dir / "file1.txt";
+    fs::path file2 = test_dir / "file2.txt";
+
+    int status = runXDiffCli({ "--moved=zebra", file1.string(), file2.string() }, output, error);
+
+    EXPECT_EQ(0, status) << "Moved zebra mode should work";
+    // Should detect moved blocks
+    EXPECT_TRUE(output.find("{") != std::string::npos) << "Output should contain moved block markers";
+}
+
+// Test moved block detection with whitespace ignore
+TEST_F(XDiffCliTest, MovedBlocksWhitespaceIgnore)
+{
+    // Create files with moved block that has whitespace differences
+    createTestFile("file1.txt", "line1\nfunction_call()\nline2\n");
+    createTestFile("file2.txt", "line1\nline2\nfunction_call()  \n");
+
+    std::string output, error;
+    fs::path file1 = test_dir / "file1.txt";
+    fs::path file2 = test_dir / "file2.txt";
+
+    int status = runXDiffCli({ "--moved=plain", "--moved-ws=ignore-at-eol", 
+                               file1.string(), file2.string() }, output, error);
+
+    EXPECT_EQ(0, status) << "Moved block detection with whitespace ignore should work";
+    // Should detect the moved block despite whitespace differences
+    EXPECT_TRUE(output.find("{") != std::string::npos) << "Output should contain moved block markers";
+}
+
+// Test moved block detection - no moved blocks (no changes)
+TEST_F(XDiffCliTest, MovedBlocksNoChanges)
+{
+    createTestFile("file1.txt", "line1\nline2\nline3\n");
+    createTestFile("file2.txt", "line1\nline2\nline3\n");
+
+    std::string output, error;
+    fs::path file1 = test_dir / "file1.txt";
+    fs::path file2 = test_dir / "file2.txt";
+
+    int status = runXDiffCli({ "--moved=plain", file1.string(), file2.string() }, output, error);
+
+    EXPECT_EQ(0, status) << "Moved block detection should work with identical files";
+    EXPECT_TRUE(output.empty() || output.find("{") == std::string::npos)
+        << "Output should not contain moved markers for identical files";
+}
