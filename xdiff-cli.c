@@ -162,18 +162,13 @@ static int out_line_cb(void *priv, mmbuffer_t *mb, int nb)
                 is_moved = is_line_moved(ctx->moved_ctx, line_num, is_deleted);
 
                 if (is_moved) {
-                    /* Mark moved lines with { and } */
+                    /* Mark moved lines with < and > prefix} */
                     if (line[0] == '-') {
-                        printf("{");
-                        fwrite(line + 1, 1, size - 1, stdout);
-                        printf("}");
+                        printf("<");
                     } else if (line[0] == '+') {
-                        printf("{");
-                        fwrite(line + 1, 1, size - 1, stdout);
-                        printf("}");
-                    } else {
-                        fwrite(line, 1, size, stdout);
+                        printf(">");
                     }
+                    fwrite(line + 1, 1, size - 1, stdout);
                     continue;
                 }
             }

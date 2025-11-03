@@ -16,7 +16,7 @@ target_link_libraries(xdiff libxdiff)
 
 # Installation
 install(TARGETS xdiff DESTINATION bin)
-install(TARGETS libxdiff ARCHIVE DESTINATION lib)
+#install(TARGETS libxdiff ARCHIVE DESTINATION lib)
 
 # Testing setup
 enable_testing()
