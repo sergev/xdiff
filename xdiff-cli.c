@@ -215,7 +215,7 @@ int main(int argc, char *argv[])
     unsigned long xpp_flags = 0;
     unsigned long emit_flags = 0;
     int algorithm_set = 0;
-    enum moved_mode moved_mode = MOVED_MODE_NO;
+    enum moved_mode moved_mode = MOVED_MODE_PLAIN;
     enum moved_ws_mode moved_ws_mode = MOVED_WS_NO;
     struct moved_context moved_ctx;
     mmfile_t mf1, mf2;
